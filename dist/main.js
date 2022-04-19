@@ -56,8 +56,8 @@ const createServer = async () => {
             });
         });
     });
-    return app.listen(8080, () => {
-        console.log('Listening on port 8080');
+    return app.listen(process.env.PORT || 8080, () => {
+        console.log('Server started');
     });
 };
 let server = await createServer();
