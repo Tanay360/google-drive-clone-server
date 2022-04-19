@@ -5,6 +5,7 @@ const createServer = async () => {
     const { default: cors } = await import('cors');
     const { upload } = await import('node-annonfiles');
     const { default: stream } = await import('stream');
+    const { default: https } = await import('https');
     const { default: fs } = await import('fs');
     const { default: formidable } = await import('formidable');
     const app = express();
@@ -21,10 +22,12 @@ const createServer = async () => {
             return;
         }
         console.log(anonLink);
-        const buffer = (await axios.get(anonLink)).data;
-        const readStream = new stream.PassThrough();
-        readStream.end(buffer);
-        readStream.pipe(res);
+        https.get(anonLink, (response) => {
+            response.pipe(res);
+            res.on('finish', () => {
+                res.end();
+            });
+        });
     });
     app.route('/postFile').post((req, res, _next) => {
         var form = new formidable.IncomingForm();
